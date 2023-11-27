@@ -23,14 +23,14 @@
 ## インストールと実行方法
 1. リポジトリをクローンする。
 2. envファイルを作成する。
+3. サーバーを立ち上げる。
+4. [http://localhost:8080/](http://localhost:8080/)にアクセスする。
+
 #### envファイルの作成
   ファイル名を「.env」とし、以下の環境変数を定義する。
   - ポート番号：PORT=8080
   - 暗号化用のキー：SECRET=○○
   - DB="host=○○ user=○○ password=○○ dbname=○○ port=5432 sslmode=disable"
-3. サーバーを立ち上げる。
-4. [http://localhost:8080/](http://localhost:8080/)にアクセスする。
-
 
 
 ## 使い方
