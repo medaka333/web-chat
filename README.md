@@ -29,7 +29,7 @@
   - 暗号化用のキー：SECRET=○○
   - DB="host=○○ user=○○ password=○○ dbname=○○ port=5432 sslmode=disable"
 3. サーバーを立ち上げる。
-4. [http](http://localhost:8080/)にアクセスする。
+4. [http://localhost:8080/](http://localhost:8080/)にアクセスする。
 
 
 
