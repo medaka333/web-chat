@@ -44,17 +44,9 @@ func TodoUpdate(c *gin.Context) {
 	id, _ := strconv.Atoi(c.PostForm("id"))
 	// .Where().Whereで繋ぐことで’かつ'AND演算子の役割をする
 	initializers.DB.Debug().Where("id=?", id).Where("user_id=?", todo.UserID).Find(&todo)
-	// 15
-	// 2
-	// 古い内容
-
 	content := c.PostForm("content")
 	todo.Content = content
 
-	// todo
-	// gorm.Model = todoリストのID　＝15（15番目に作られたtodoリスト）
-	// UserID     user.ID 誰が作ったtodoかわかる=2（2番目に登録したユーザー）
-	// Content    =新しい内容
 	result := initializers.DB.Debug().Updates(&todo)
 	if result.Error != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
