@@ -82,8 +82,6 @@ func main() {
 	// delete room
 	r.POST("/home/destroy_group", middleware.RequireAuth, controllers.DeleteGroup)
 
-	//
-	//
 	// chat history
 	r.GET("/chat/chat", middleware.RequireAuth, controllers.ListChatHistory)
 	// chat list
