@@ -24,9 +24,6 @@ func Signup(c *gin.Context) {
 	body.UserName = c.PostForm("username")
 	body.Password = c.PostForm("password")
 
-	// username := body.UserName
-	// password := body.Password
-
 	// // ユーザー名のエラー処理
 	// if !(strings.Contains(username, "@")) {
 	// 	c.JSON(http.StatusBadRequest, gin.H{
