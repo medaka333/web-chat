@@ -14,8 +14,9 @@
 - リアルタイム通信: WebSocketを使用して、チャットをリアルタイムで行えます。
 
 ## 技術スタック
-- フロントエンド: HTML,JavaScript,
-- バックエンド: GO,Gin,gorm
+- フロントエンド: HTML,CSS,JavaScript
+- バックエンド: GO
+- フレームワーク: Gin,gorm
 - データベース: PostgreSQL
 - 認証: JWTを使用してユーザ認証を実装
 - 通信: WebSocketを用いたリアルタイム通信
