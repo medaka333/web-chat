@@ -21,14 +21,6 @@ func Signup(c *gin.Context) {
 	}
 
 	// UserNameとpasswordを取得
-	// リクエストしたものを名前が同じ変数に格納する
-	// if c.Bind(&body) != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{
-	// 		"error": "Failed to read body",
-	// 	})
-	// 	return
-	// }
-
 	body.UserName = c.PostForm("username")
 	body.Password = c.PostForm("password")
 
@@ -43,17 +35,6 @@ func Signup(c *gin.Context) {
 	// 	return
 	// }
 
-	// // パスの条件
-	// // 文字が7文字以上。数字・大文字・句読点と記号が1文字以上。空白なし。
-	// sevenOrMore, number, upper, special, space := VerifyPassword(password)
-	// if !sevenOrMore || !number || !upper || !special || space {
-	// 	c.HTML(http.StatusBadRequest, "home.html", gin.H{
-	// 		"title":  "Home",
-	// 		"result": "passwordの条件を満たしてません",
-	// 	})
-	// 	return
-	// }
-
 	// Hash the password
 	hash, err := bcrypt.GenerateFromPassword([]byte(body.Password), 10)
 
@@ -61,7 +42,6 @@ func Signup(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Failed to hash password",
 		})
-
 		return
 	}
 
@@ -91,13 +71,6 @@ func Login(c *gin.Context) {
 		Password string
 	}
 
-	// UserNameとpasswordを取得
-	// if c.Bind(&body) != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{
-	// 		"error": "Failed to read body",
-	// 	})
-	// 	return
-	// }
 	body.UserName = c.PostForm("username")
 	body.Password = c.PostForm("password")
 
@@ -111,7 +84,6 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Invalid username or password",
 		})
-
 		return
 	}
 
@@ -123,7 +95,6 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Invalid username or password",
 		})
-
 		return
 	}
 
@@ -145,7 +116,6 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Failed to create token",
 		})
-
 		return
 	}
 
@@ -161,14 +131,6 @@ func Logout(c *gin.Context) {
 	c.HTML(http.StatusOK, "auth.html", gin.H{
 		"title":  "Auth",
 		"result": "Success to Logout",
-	})
-}
-
-func Validate(c *gin.Context) {
-	user, _ := c.Get("user")
-
-	c.JSON(http.StatusOK, gin.H{
-		"message": user,
 	})
 }
 
