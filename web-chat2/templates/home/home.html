@@ -104,7 +104,6 @@
         {{ range .rooms }}  
             <p>
             <form role="form" action="/home/destroy_group" method="POST">
-                <!-- <input type="hidden" name="room" value="{{.RoomName}}"> -->
                 <input type="hidden" name="room_id" value="{{.ID}}">
                 <li><a>{{ .RoomName }}</a></li>
                 <a><button class="delete-button">削除</button></a>
@@ -201,10 +200,4 @@
         <i class="fas fa-comments"></i> チャット
     </a>
 </footer>
-
 </html>
-
-<!-- ログアウトの挙動を忘れず追加する -->
-<!-- {{.title}}を<h1>に入れるのを忘れない -->
-    <!-- 検索ボタンの挙動 -->
-
