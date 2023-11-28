@@ -12,7 +12,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// 誰作？
 func CreateChat(c *gin.Context) {
 	user, _ := c.Get("user")
 	content := &models.Req_reseiver{}
@@ -24,13 +23,12 @@ func CreateChat(c *gin.Context) {
 	// チャットデータを構造体に格納
 	chat := &models.Chat_history{
 		Content: content.Content,
-		// RoomID:  87,
 		RoomID: content.RoomID,
 		UserID: user.(models.Users).ID,
 	}
 	// chat_historyテーブルにデータを挿入
 	result := initializers.DB.Create(&chat)
-	// エラー処理s
+	// エラー処理
 	if result.Error != nil {
 		c.HTML(http.StatusBadRequest, "chat.html", gin.H{
 			"title":  user.(models.Users).UserName,
@@ -41,7 +39,6 @@ func CreateChat(c *gin.Context) {
 	c.JSON(http.StatusOK, chat)
 }
 
-// ryo作
 func ChatList(c *gin.Context) {
 	user, _ := c.Get("user")
 
@@ -64,7 +61,6 @@ func ChatList(c *gin.Context) {
 	for _, v := range grouproom {
 		var room models.Rooms
 		initializers.DB.Where("id = ?", v.RoomsRefer).Find(&room)
-		//変更部分
 		if room.RoomName != "" {
 			room2 = append(room2, room)
 		}
@@ -72,7 +68,6 @@ func ChatList(c *gin.Context) {
 
 	c.HTML(http.StatusOK, "chatlist.html", gin.H{
 		"title": user.(models.Users).UserName + "'s Chat",
-		// "chatroom": chatroom,
 		"room1": room1,
 		"room2": room2,
 	})
@@ -119,10 +114,8 @@ func ListChatHistory(c *gin.Context) {
 		go h.Run()
 		models.RoomToHub[uint(room_id)] = h
 	}
-	// initializers.DB.Find(&chat_history, "room_id = ?", user.(models.Chat_history).ID)
 	initializers.DB.Where("room_id = ?", room_id).Find(&chat_history)
 	initializers.DB.Where("id = ?", room_id).Find(&room)
-	// fmt.Print(chat_history)
 	c.HTML(http.StatusOK, "chat.html", gin.H{
 		"title":        room.RoomName + "'s Chat History",
 		"chat_history": chat_history,
