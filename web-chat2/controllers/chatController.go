@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -12,10 +11,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// チャットをデータベースに登録
 func CreateChat(c *gin.Context) {
 	user, _ := c.Get("user")
 	content := &models.Req_reseiver{}
-	fmt.Print("ccstart")
 	if err := c.Bind(content); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -23,8 +22,8 @@ func CreateChat(c *gin.Context) {
 	// チャットデータを構造体に格納
 	chat := &models.Chat_history{
 		Content: content.Content,
-		RoomID: content.RoomID,
-		UserID: user.(models.Users).ID,
+		RoomID:  content.RoomID,
+		UserID:  user.(models.Users).ID,
 	}
 	// chat_historyテーブルにデータを挿入
 	result := initializers.DB.Create(&chat)
@@ -32,13 +31,14 @@ func CreateChat(c *gin.Context) {
 	if result.Error != nil {
 		c.HTML(http.StatusBadRequest, "chat.html", gin.H{
 			"title":  user.(models.Users).UserName,
-			"result": "todoの作成に失敗しました",
+			"result": "エラーが発生しました",
 		})
 		return
 	}
 	c.JSON(http.StatusOK, chat)
 }
 
+// チャットリストをフロントに返す
 func ChatList(c *gin.Context) {
 	user, _ := c.Get("user")
 
@@ -61,6 +61,7 @@ func ChatList(c *gin.Context) {
 	for _, v := range grouproom {
 		var room models.Rooms
 		initializers.DB.Where("id = ?", v.RoomsRefer).Find(&room)
+		//変更部分
 		if room.RoomName != "" {
 			room2 = append(room2, room)
 		}
@@ -73,12 +74,10 @@ func ChatList(c *gin.Context) {
 	})
 }
 
-// show chat history at a room
+// ルームのチャット履歴を表示（フロントに返す）show chat history at a room
 func ListChatHistory(c *gin.Context) {
 	user, _ := c.Get("user")
 	userID := user.(models.Users).ID
-	var chat_history []models.Chat_history
-	var room models.Rooms
 	room_id, err := strconv.Atoi(c.Query("id"))
 	if err != nil {
 		log.Fatalln(err)
@@ -114,11 +113,21 @@ func ListChatHistory(c *gin.Context) {
 		go h.Run()
 		models.RoomToHub[uint(room_id)] = h
 	}
+	var chat_history []models.Chat_history
+	var room models.Rooms
 	initializers.DB.Where("room_id = ?", room_id).Find(&chat_history)
 	initializers.DB.Where("id = ?", room_id).Find(&room)
+
+	for i, chat := range chat_history {
+		var chat_user models.Users
+		initializers.DB.Where("id = ?", chat.UserID).First(&chat_user)
+		chat_history[i].Content = chat_user.UserName + ": " + chat.Content
+	}
+
 	c.HTML(http.StatusOK, "chat.html", gin.H{
 		"title":        room.RoomName + "'s Chat History",
 		"chat_history": chat_history,
 		"room":         room,
+		"user":         user.(models.Users).UserName,
 	})
 }

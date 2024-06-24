@@ -33,6 +33,7 @@ func Lists(c *gin.Context) {
 	// 友達IDをもとにusersテーブルから友達の名前を取得。 IN:スライスを扱える。Pluck():スライス形式で渡せる
 	var users []models.Users
 	result = initializers.DB.Where("id IN ?", friendsIDs).Find(&users)
+
 	if result.Error != nil {
 		c.HTML(http.StatusOK, "home.html", gin.H{
 			"title": "エラーが発生しました",
@@ -61,7 +62,7 @@ func Lists(c *gin.Context) {
 		return
 	}
 	c.HTML(http.StatusOK, "home.html", gin.H{
-		"title": "Home",
+		"title": "Home" + user.(models.Users).UserName,
 		"users": users,
 		"rooms": rooms,
 	})
@@ -79,7 +80,7 @@ func SearchFriend(c *gin.Context) {
 		return
 	}
 	user1 := models.Users{}
-	result := initializers.DB.Where("user_name = ?", user_name).Find(&user1)
+	result := initializers.DB.Where("user_name = ?", user_name).First(&user1)
 	if result.Error != nil {
 		c.HTML(http.StatusOK, "home.html", gin.H{
 			"title": "エラーが発生しました",
@@ -95,7 +96,7 @@ func SearchFriend(c *gin.Context) {
 	conditions := "(user_id1 = ? AND user_id2 = ?) OR (user_id1 = ? AND user_id2 = ?)"
 	userID := user.(models.Users).ID
 	result = initializers.DB.Where(conditions, userID, user1.ID, user1.ID, userID).First(&friend)
-	if friend.UserID1 == user1.ID || friend.UserID2 == user1.ID {
+	if friend.UserID1 != 0 {
 		Result(c, "すでにフレンドです", models.Users{})
 		return
 	}
@@ -106,7 +107,7 @@ func AddFriend(c *gin.Context) {
 	user, _ := c.Get("user")
 	user_id2, _ := strconv.Atoi(c.PostForm("userID"))
 	user_name := (c.PostForm("userName"))
-	room_name := user.(models.Users).UserName + user_name
+	room_name := user.(models.Users).UserName + " & " + user_name
 	room := models.Rooms{RoomName: room_name}
 	//　部屋作成
 	result := initializers.DB.Create(&room)
@@ -123,11 +124,10 @@ func AddFriend(c *gin.Context) {
 	result = initializers.DB.Create(&friend)
 	if result.Error != nil {
 		// 一度作った部屋を消す
-		initializers.DB.Where("room_name = ?", room_name).Delete(models.Rooms{})
+		initializers.DB.Where("id = ?", room.ID).Delete(models.Rooms{})
 		Result(c, "ユーザーを追加できませんでした", models.Users{})
 		return
 	}
-
 	c.Redirect(http.StatusSeeOther, "/home")
 }
 
